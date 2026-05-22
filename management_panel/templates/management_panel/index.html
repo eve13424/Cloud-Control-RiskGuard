@@ -1,0 +1,506 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Cloud Control RiskGuard</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6fb;
+            color: #1f2937;
+        }
+
+        .page {
+            max-width: 1320px;
+            margin: 0 auto;
+            padding: 28px;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #172554, #1d4ed8);
+            color: white;
+            border-radius: 18px;
+            padding: 28px;
+            margin-bottom: 22px;
+            box-shadow: 0 12px 30px rgba(23, 37, 84, 0.18);
+        }
+
+        .hero h1 {
+            margin: 0 0 8px 0;
+            font-size: 32px;
+        }
+
+        .hero p {
+            max-width: 900px;
+            line-height: 1.5;
+            margin: 0;
+            color: #dbeafe;
+        }
+
+        .grid {
+            display: grid;
+            gap: 18px;
+        }
+
+        .grid-4 {
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+
+        .grid-2 {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 18px;
+            box-shadow: 0 8px 22px rgba(15, 23, 42, 0.08);
+            border: 1px solid #e5e7eb;
+        }
+
+        .kpi {
+            min-height: 92px;
+        }
+
+        .kpi-title {
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .kpi-value {
+            font-size: 30px;
+            font-weight: bold;
+            color: #111827;
+        }
+
+        .section-title {
+            margin-top: 0;
+            margin-bottom: 14px;
+            color: #111827;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        th, td {
+            border-bottom: 1px solid #e5e7eb;
+            padding: 10px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            background: #f8fafc;
+            color: #334155;
+            font-weight: bold;
+        }
+
+        tr:hover td {
+            background: #f9fafb;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 9px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .badge-ok {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .badge-bad {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .badge-warn {
+            background: #ffedd5;
+            color: #9a3412;
+        }
+
+        .badge-info {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 6px;
+            color: #374151;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            padding: 10px;
+            background: white;
+            color: #111827;
+        }
+
+        .check-row {
+            display: flex;
+            gap: 18px;
+            align-items: center;
+            margin-top: 14px;
+            flex-wrap: wrap;
+        }
+
+        .check-row label {
+            font-weight: normal;
+            margin: 0;
+        }
+
+        button {
+            border: 0;
+            border-radius: 10px;
+            padding: 11px 16px;
+            background: #1d4ed8;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background: #1e40af;
+        }
+
+        .secondary-button {
+            background: #475569;
+        }
+
+        .secondary-button:hover {
+            background: #334155;
+        }
+
+        .message {
+            background: #eff6ff;
+            border-left: 4px solid #2563eb;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .charts img {
+            width: 100%;
+            max-width: 620px;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            background: white;
+            padding: 8px;
+        }
+
+        .small-text {
+            color: #64748b;
+            font-size: 13px;
+            line-height: 1.45;
+        }
+
+        @media (max-width: 900px) {
+            .grid-4,
+            .grid-2,
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="page">
+
+    <!-- БЛОК ЗАГОЛОВКА ПРОДУКТА -->
+    <div class="hero">
+        <h1>Cloud Control RiskGuard</h1>
+        <p>
+            MVP платформы контроля критичных управленческих действий в облачной инфраструктуре.
+            Решение проверяет роли пользователей, критичность операций, второе подтверждение,
+            влияние изменений на доступность и выполняет откат при нарушении работоспособности.
+        </p>
+
+        <div style="margin-top: 18px;">
+            <a href="{% url 'admin_console' %}" style="display: inline-block; color: white; text-decoration: none; background: rgba(255,255,255,0.16); padding: 10px 14px; border-radius: 10px; font-weight: bold;">
+                Открыть Admin Console
+            </a>
+        </div>
+    </div>
+
+    <!-- БЛОК СООБЩЕНИЙ -->
+    {% if messages %}
+    <div class="card">
+        {% for message in messages %}
+            <div class="message">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- БЛОК KPI -->
+    <div class="grid grid-4">
+        <div class="card kpi">
+            <div class="kpi-title">Доступность</div>
+            <div class="kpi-value">
+                {% if system_status.available == 1 %}
+                    <span class="badge badge-ok">Доступна</span>
+                {% else %}
+                    <span class="badge badge-bad">Недоступна</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="card kpi">
+            <div class="kpi-title">Разрешенные действия</div>
+            <div class="kpi-value">{{ kpi.allow_count }}</div>
+        </div>
+
+        <div class="card kpi">
+            <div class="kpi-title">Запрещенные действия</div>
+            <div class="kpi-value">{{ kpi.deny_count }}</div>
+        </div>
+
+        <div class="card kpi">
+            <div class="kpi-title">Откаты и высокий риск</div>
+            <div class="kpi-value">{{ kpi.rollback_count }} / {{ kpi.high_risk_count }}</div>
+        </div>
+    </div>
+
+    <!-- БЛОК СОСТОЯНИЯ И ФОРМЫ -->
+    <div class="grid grid-2">
+        <div class="card">
+            <h2 class="section-title">Текущее состояние системы</h2>
+            <table>
+                <tr><th>Параметр</th><th>Значение</th></tr>
+                <tr><td>Сервис запущен</td><td>{{ system_status.service_running }}</td></tr>
+                <tr><td>Маршрутизация корректна</td><td>{{ system_status.routing_ok }}</td></tr>
+                <tr><td>Лимит CPU</td><td>{{ system_status.cpu_limit }}</td></tr>
+                <tr><td>Лимит памяти</td><td>{{ system_status.memory_limit }}</td></tr>
+                <tr><td>Самовосстановление</td><td>{{ system_status.self_healing }}</td></tr>
+                <tr><td>Критичный компонент работает</td><td>{{ system_status.critical_component_running }}</td></tr>
+            </table>
+        </div>
+
+        <div class="card">
+            <h2 class="section-title">Новый управленческий запрос</h2>
+
+            <form method="post">
+                {% csrf_token %}
+
+                <div class="form-grid">
+                    <div>
+                        <label for="actor">Субъект управления</label>
+                        <input type="text" name="actor" id="actor" value="Иманбаева Э.Е.">
+                    </div>
+
+                    <div>
+                        <label for="role">Роль</label>
+                        <select name="role" id="role">
+                            {% for role in roles %}
+                                <option value="{{ role }}">{{ role }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="action">Операция</label>
+                        <select name="action" id="action">
+                            {% for action in actions %}
+                                <option value="{{ action }}">{{ action }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="new_route">Маршрут</label>
+                        <select name="new_route" id="new_route">
+                            {% for route in routes %}
+                                <option value="{{ route }}">{{ route }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="new_cpu">Новое значение CPU</label>
+                        <input type="number" name="new_cpu" id="new_cpu" value="8">
+                    </div>
+
+                    <div>
+                        <label for="new_memory">Новое значение RAM</label>
+                        <input type="number" name="new_memory" id="new_memory" value="16">
+                    </div>
+                </div>
+
+                <div class="check-row">
+                    <label>
+                        <input type="checkbox" name="approved">
+                        Второе подтверждение
+                    </label>
+
+                    <label>
+                        <input type="checkbox" name="simulate_failure">
+                        Смоделировать отказ
+                    </label>
+                </div>
+
+                <div style="margin-top: 16px;">
+                    <button type="submit">Отправить запрос</button>
+                </div>
+            </form>
+
+            <form method="post" action="{% url 'reset_demo' %}" style="margin-top: 10px;">
+                {% csrf_token %}
+                <button type="submit" class="secondary-button">Сбросить и заново выполнить демо</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- БЛОК ЖУРНАЛА -->
+    <div class="card">
+        <h2 class="section-title">Журнал управленческих действий</h2>
+        <p class="small-text">
+            Журнал фиксирует субъект управления, роль, операцию, решение контейнера,
+            уровень риска, причину решения и сведения о восстановлении.
+        </p>
+
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Время</th>
+                <th>Субъект</th>
+                <th>Роль</th>
+                <th>Операция</th>
+                <th>Решение</th>
+                <th>Риск</th>
+                <th>Причина</th>
+                <th>Восстановление</th>
+            </tr>
+
+            {% for row in audit_rows %}
+            <tr>
+                <td>{{ row.request_id }}</td>
+                <td>{{ row.time }}</td>
+                <td>{{ row.actor }}</td>
+                <td>{{ row.role }}</td>
+                <td>{{ row.action }}</td>
+                <td>
+                    {% if row.decision == "allow" %}
+                        <span class="badge badge-ok">allow</span>
+                    {% elif row.decision == "rollback" %}
+                        <span class="badge badge-warn">rollback</span>
+                    {% else %}
+                        <span class="badge badge-bad">deny</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if row.risk_level == "Высокий" %}
+                        <span class="badge badge-bad">{{ row.risk_level }}</span>
+                    {% elif row.risk_level == "Средний" %}
+                        <span class="badge badge-warn">{{ row.risk_level }}</span>
+                    {% else %}
+                        <span class="badge badge-info">{{ row.risk_level }}</span>
+                    {% endif %}
+                </td>
+                <td>{{ row.reason }}</td>
+                <td>{{ row.recovery }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <!-- БЛОК ИСТОРИИ И СВОДОК -->
+    <div class="grid grid-2">
+        <div class="card">
+            <h2 class="section-title">История доступности</h2>
+            <table>
+                <tr>
+                    <th>Шаг</th>
+                    <th>Доступность</th>
+                    <th>CPU</th>
+                    <th>RAM</th>
+                    <th>Решение</th>
+                    <th>Риск</th>
+                </tr>
+                {% for row in history_rows %}
+                <tr>
+                    <td>{{ row.step }}</td>
+                    <td>{{ row.available }}</td>
+                    <td>{{ row.cpu_limit }}</td>
+                    <td>{{ row.memory_limit }}</td>
+                    <td>{{ row.decision }}</td>
+                    <td>{{ row.risk_level }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+        <div class="card">
+            <h2 class="section-title">Сводка решений и рисков</h2>
+
+            <h3>Решения контейнера</h3>
+            <table>
+                <tr><th>Решение</th><th>Количество</th></tr>
+                {% for row in summary_rows %}
+                <tr><td>{{ row.decision }}</td><td>{{ row.count }}</td></tr>
+                {% endfor %}
+            </table>
+
+            <h3>Уровни риска</h3>
+            <table>
+                <tr><th>Риск</th><th>Количество</th></tr>
+                {% for row in risk_rows %}
+                <tr><td>{{ row.risk_level }}</td><td>{{ row.count }}</td></tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+
+    <!-- БЛОК ГРАФИКОВ -->
+    <div class="card charts">
+        <h2 class="section-title">Графики мониторинга</h2>
+
+        <div class="grid grid-2">
+            <div>
+                <p><strong>Количество решений контейнера</strong></p>
+                <img src="{% static 'management_panel/chart_decisions.png' %}?v={{ chart_version }}" alt="График решений">
+            </div>
+
+            <div>
+                <p><strong>Доступность системы по шагам</strong></p>
+                <img src="{% static 'management_panel/chart_availability.png' %}?v={{ chart_version }}" alt="График доступности">
+            </div>
+
+            <div>
+                <p><strong>Изменение лимитов ресурсов</strong></p>
+                <img src="{% static 'management_panel/chart_resources.png' %}?v={{ chart_version }}" alt="График ресурсов">
+            </div>
+
+            <div>
+                <p><strong>Распределение операций по уровню риска</strong></p>
+                <img src="{% static 'management_panel/chart_risk.png' %}?v={{ chart_version }}" alt="График рисков">
+            </div>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

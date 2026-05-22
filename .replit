@@ -1,18 +1,25 @@
-run = ["python", "manage.py", "runserver", "0.0.0.0:3000"]
+# БЛОК ОСНОВНОГО ФАЙЛА ПРОЕКТА
 entrypoint = "manage.py"
-modules = ["python-3.10:v18-20230807-322e88b"]
 
-hidden = [".pythonlibs"]
+# БЛОК ВЕРСИИ PYTHON
+modules = ["python-3.11"]
+
+# БЛОК КОМАНДЫ ЗАПУСКА
+run = ".venv/bin/python manage.py runserver 0.0.0.0:3000"
 
 [nix]
-channel = "stable-24_05"
+channel = "stable-25_05"
+packages = ["cairo", "ffmpeg-full", "freetype", "ghostscript", "glibcLocales", "gobject-introspection", "gtk3", "pkg-config", "qhull", "tcl", "tk"]
 
 [unitTest]
 language = "python3"
 
 [deployment]
-run = ["python", "manage.py", "runserver", "0.0.0.0:3000"]
-deploymentTarget = "gce"
+run = [".venv/bin/python", "manage.py", "runserver", "0.0.0.0:3000"]
+deploymentTarget = "cloudrun"
+
+[agent]
+expertMode = true
 
 [[ports]]
 localPort = 3000

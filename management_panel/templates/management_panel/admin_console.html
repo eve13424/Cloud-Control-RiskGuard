@@ -1,0 +1,390 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Policy Admin Console — Cloud Control RiskGuard</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #eef2f8;
+            color: #111827;
+        }
+
+        .layout {
+            max-width: 1320px;
+            margin: 0 auto;
+            padding: 28px;
+        }
+
+        .topbar {
+            background: linear-gradient(135deg, #0f172a, #1d4ed8);
+            color: white;
+            border-radius: 20px;
+            padding: 26px 28px;
+            margin-bottom: 20px;
+            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.2);
+        }
+
+        .topbar h1 {
+            margin: 0 0 8px 0;
+            font-size: 30px;
+        }
+
+        .topbar p {
+            margin: 0;
+            color: #dbeafe;
+            max-width: 900px;
+            line-height: 1.5;
+        }
+
+        .nav {
+            margin-top: 18px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .nav a {
+            color: white;
+            text-decoration: none;
+            background: rgba(255, 255, 255, 0.16);
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+
+        .grid {
+            display: grid;
+            gap: 18px;
+        }
+
+        .grid-4 {
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+
+        .grid-2 {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 18px;
+            box-shadow: 0 8px 22px rgba(15, 23, 42, 0.08);
+            border: 1px solid #e5e7eb;
+        }
+
+        .kpi-title {
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .kpi-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #0f172a;
+        }
+
+        h2 {
+            margin-top: 0;
+            color: #111827;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 6px;
+            color: #374151;
+        }
+
+        input[type="number"],
+        textarea {
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            padding: 10px;
+            background: white;
+            color: #111827;
+            margin-bottom: 14px;
+        }
+
+        textarea {
+            min-height: 90px;
+            resize: vertical;
+        }
+
+        button {
+            border: 0;
+            border-radius: 10px;
+            padding: 11px 16px;
+            background: #1d4ed8;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .secondary-button {
+            background: #475569;
+        }
+
+        .danger-button {
+            background: #b91c1c;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        th, td {
+            border-bottom: 1px solid #e5e7eb;
+            padding: 10px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            background: #f8fafc;
+            color: #334155;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 9px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .ok {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .bad {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .warn {
+            background: #ffedd5;
+            color: #9a3412;
+        }
+
+        .info {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .message {
+            background: #eff6ff;
+            border-left: 4px solid #2563eb;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .text-muted {
+            color: #64748b;
+            font-size: 13px;
+            line-height: 1.45;
+        }
+
+        .checkbox-list label {
+            font-weight: normal;
+            margin-bottom: 8px;
+        }
+
+        @media (max-width: 900px) {
+            .grid-4,
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="layout">
+
+    <div class="topbar">
+        <h1>Policy Admin Console</h1>
+        <p>
+            Консоль настройки политики контейнера безопасности. Здесь задаются минимальные
+            параметры доступности, допустимые маршруты и перечень критичных действий,
+            для которых требуется второе подтверждение.
+        </p>
+
+        <div class="nav">
+            <a href="{% url 'index' %}">Вернуться на dashboard</a>
+        </div>
+    </div>
+
+    {% if messages %}
+    <div class="card">
+        {% for message in messages %}
+            <div class="message">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="grid grid-4">
+        <div class="card">
+            <div class="kpi-title">Записей в журнале</div>
+            <div class="kpi-value">{{ audit_count }}</div>
+        </div>
+
+        <div class="card">
+            <div class="kpi-title">Минимальный CPU</div>
+            <div class="kpi-value">{{ security_policy.min_cpu_limit }}</div>
+        </div>
+
+        <div class="card">
+            <div class="kpi-title">Минимальная RAM</div>
+            <div class="kpi-value">{{ security_policy.min_memory_limit }}</div>
+        </div>
+
+        <div class="card">
+            <div class="kpi-title">Операции высокого риска</div>
+            <div class="kpi-value">{{ kpi.high_risk_count }}</div>
+        </div>
+    </div>
+
+    <div class="grid grid-2">
+        <div class="card">
+            <h2>Настройка политики безопасности</h2>
+            <p class="text-muted">
+                Эти параметры реально используются в логике контейнера при проверке доступности,
+                маршрутов и критичности управленческих действий.
+            </p>
+
+            <form method="post">
+                <input type="hidden" name="form_action" value="update_policy">
+
+                <label for="min_cpu_limit">Минимально допустимый CPU</label>
+                <input type="number" name="min_cpu_limit" id="min_cpu_limit" value="{{ security_policy.min_cpu_limit }}">
+
+                <label for="min_memory_limit">Минимально допустимая RAM</label>
+                <input type="number" name="min_memory_limit" id="min_memory_limit" value="{{ security_policy.min_memory_limit }}">
+
+                <label for="allowed_routes">Допустимые маршруты</label>
+                <textarea name="allowed_routes" id="allowed_routes">{{ routes_text }}</textarea>
+
+                <label>Критичные действия</label>
+                <div class="checkbox-list">
+                    {% for row in roles_matrix %}
+                    <label>
+                        <input type="checkbox" name="critical_actions" value="{{ row.action }}" {% if row.is_critical %}checked{% endif %}>
+                        {{ row.action }}
+                    </label>
+                    {% endfor %}
+                </div>
+
+                <button type="submit">Сохранить политику</button>
+            </form>
+
+            <form method="post" style="margin-top: 10px;">
+                <input type="hidden" name="form_action" value="reset_policy">
+                <button type="submit" class="secondary-button">Вернуть исходную политику</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2>Матрица ролей и действий</h2>
+            <p class="text-muted">
+                Матрица показывает, какие роли имеют право выполнять управленческие действия.
+                Критичность действия определяет необходимость второго подтверждения.
+            </p>
+
+            <table>
+                <tr>
+                    <th>Операция</th>
+                    <th>Разрешенные роли</th>
+                    <th>Статус</th>
+                </tr>
+
+                {% for row in roles_matrix %}
+                <tr>
+                    <td>{{ row.action }}</td>
+                    <td>{{ row.roles }}</td>
+                    <td>
+                        {% if row.is_critical %}
+                            <span class="badge warn">Критичная</span>
+                        {% else %}
+                            <span class="badge info">Обычная</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+
+    <div class="grid grid-2">
+        <div class="card">
+            <h2>Экспорт аудиторского следа</h2>
+            <p class="text-muted">
+                Файлы формируются автоматически после обработки запросов и используются
+                для подтверждения журналирования управленческих действий.
+            </p>
+
+            <table>
+                <tr>
+                    <th>Файл</th>
+                    <th>Наличие</th>
+                    <th>Размер, байт</th>
+                </tr>
+
+                {% for file in export_files %}
+                <tr>
+                    <td>{{ file.name }}</td>
+                    <td>
+                        {% if file.exists %}
+                            <span class="badge ok">Создан</span>
+                        {% else %}
+                            <span class="badge bad">Нет</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ file.size }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+        <div class="card">
+            <h2>Сводка решений и рисков</h2>
+
+            <h3>Решения контейнера</h3>
+            <table>
+                <tr><th>Решение</th><th>Количество</th></tr>
+                {% for row in summary_rows %}
+                <tr>
+                    <td>{{ row.decision }}</td>
+                    <td>{{ row.count }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+
+            <h3>Уровни риска</h3>
+            <table>
+                <tr><th>Уровень риска</th><th>Количество</th></tr>
+                {% for row in risk_rows %}
+                <tr>
+                    <td>{{ row.risk_level }}</td>
+                    <td>{{ row.count }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

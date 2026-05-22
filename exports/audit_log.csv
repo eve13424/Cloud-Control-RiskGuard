@@ -1,0 +1,8 @@
+﻿request_id,time,actor,role,action,decision,risk_level,reason,approved,availability_before,availability_after,cpu_before,cpu_after,memory_before,memory_after,recovery
+1,2026-05-22 23:52:19,Иманбаева Э.Е.,admin_customer,change_resources,allow,Средний,Ресурсы соответствуют политике доступности,1,1,1,6,8,12,16,Не требуется
+2,2026-05-22 23:52:19,Оператор поставщика,operator_provider,change_routing,allow,Средний,Маршрут допустим,1,1,1,8,8,16,16,Не требуется
+3,2026-05-22 23:52:19,Оператор поставщика,operator_provider,disable_self_healing,deny,Высокий,Роль не имеет полномочий,0,1,1,8,8,16,16,Не требуется
+4,2026-05-22 23:52:19,Иманбаева Э.Е.,admin_customer,restart_critical_component,deny,Высокий,Нет второго подтверждения,0,1,1,8,8,16,16,Не требуется
+5,2026-05-22 23:52:19,Иманбаева Э.Е.,admin_customer,restart_critical_component,rollback,Высокий,После изменения нарушена доступность,1,1,1,8,8,16,16,Выполнен откат к предыдущей конфигурации
+6,2026-05-22 23:52:19,Аудитор,auditor,read_audit,allow,Низкий,Чтение журнала разрешено,0,1,1,8,8,16,16,Не требуется
+7,2026-05-22 23:53:57,Иманбаева Э.Е.,admin_customer,change_resources,deny,Средний,Недопустимые лимиты ресурсов,1,0,0,8,8,16,16,Не требуется

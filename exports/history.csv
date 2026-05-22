@@ -1,0 +1,8 @@
+﻿step,available,cpu_limit,memory_limit,risk_level,decision
+1,1,8,16,Средний,allow
+2,1,8,16,Средний,allow
+3,1,8,16,Высокий,deny
+4,1,8,16,Высокий,deny
+5,1,8,16,Высокий,rollback
+6,1,8,16,Низкий,allow
+7,0,8,16,Средний,deny
