@@ -115,25 +115,10 @@
             font-weight: bold;
         }
 
-        .badge-ok {
-            background: #dcfce7;
-            color: #166534;
-        }
-
-        .badge-bad {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-
-        .badge-warn {
-            background: #ffedd5;
-            color: #9a3412;
-        }
-
-        .badge-info {
-            background: #dbeafe;
-            color: #1e40af;
-        }
+        .badge-ok   { background: #dcfce7; color: #166534; }
+        .badge-bad  { background: #fee2e2; color: #991b1b; }
+        .badge-warn { background: #ffedd5; color: #9a3412; }
+        .badge-info { background: #dbeafe; color: #1e40af; }
 
         .form-grid {
             display: grid;
@@ -183,17 +168,10 @@
             font-weight: bold;
         }
 
-        button:hover {
-            background: #1e40af;
-        }
+        button:hover { background: #1e40af; }
 
-        .secondary-button {
-            background: #475569;
-        }
-
-        .secondary-button:hover {
-            background: #334155;
-        }
+        .secondary-button { background: #475569; }
+        .secondary-button:hover { background: #334155; }
 
         .message {
             background: #eff6ff;
@@ -203,19 +181,38 @@
             margin-bottom: 10px;
         }
 
-        .charts img {
-            width: 100%;
-            max-width: 620px;
-            border: 1px solid #e5e7eb;
-            border-radius: 12px;
-            background: white;
-            padding: 8px;
-        }
-
         .small-text {
             color: #64748b;
             font-size: 13px;
             line-height: 1.45;
+        }
+
+        /* Chart legends */
+        .chart-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 8px;
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .chart-legend span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        .chart-wrap {
+            position: relative;
+            width: 100%;
         }
 
         @media (max-width: 900px) {
@@ -230,6 +227,12 @@
 
 <body>
 <div class="page">
+
+    <!-- ДАННЫЕ ДЛЯ ГРАФИКОВ (передаются из Django-контекста) -->
+    {{ summary_rows|json_script:"data-summary" }}
+    {{ history_rows|json_script:"data-history" }}
+    {{ risk_rows|json_script:"data-risk" }}
+    {{ audit_rows|json_script:"data-audit" }}
 
     <!-- БЛОК ЗАГОЛОВКА ПРОДУКТА -->
     <div class="hero">
@@ -474,33 +477,235 @@
         </div>
     </div>
 
-    <!-- БЛОК ГРАФИКОВ -->
-    <div class="card charts">
+    <!-- БЛОК ГРАФИКОВ — живые Chart.js вместо PNG -->
+    <div class="card">
         <h2 class="section-title">Графики мониторинга</h2>
 
         <div class="grid grid-2">
+
+            <!-- 1. Количество решений контейнера -->
             <div>
                 <p><strong>Количество решений контейнера</strong></p>
-                <img src="{% static 'management_panel/chart_decisions.png' %}?v={{ chart_version }}" alt="График решений">
+                <div class="chart-legend">
+                    <span><span class="legend-dot" style="background:#1D9E75;"></span>allow</span>
+                    <span><span class="legend-dot" style="background:#E24B4A;"></span>deny</span>
+                    <span><span class="legend-dot" style="background:#EF9F27;"></span>rollback</span>
+                </div>
+                <div class="chart-wrap" style="height:260px;">
+                    <canvas id="chartDecisions" role="img" aria-label="Столбчатая диаграмма решений контейнера">Данные загружаются...</canvas>
+                </div>
             </div>
 
+            <!-- 2. Доступность системы по шагам -->
             <div>
                 <p><strong>Доступность системы по шагам</strong></p>
-                <img src="{% static 'management_panel/chart_availability.png' %}?v={{ chart_version }}" alt="График доступности">
+                <div class="chart-legend">
+                    <span><span class="legend-dot" style="background:#1d4ed8; border-radius:0;"></span>Доступность</span>
+                </div>
+                <div class="chart-wrap" style="height:260px;">
+                    <canvas id="chartAvailability" role="img" aria-label="График доступности системы по шагам">Данные загружаются...</canvas>
+                </div>
             </div>
 
+            <!-- 3. Изменение лимитов ресурсов -->
             <div>
                 <p><strong>Изменение лимитов ресурсов</strong></p>
-                <img src="{% static 'management_panel/chart_resources.png' %}?v={{ chart_version }}" alt="График ресурсов">
+                <div class="chart-legend">
+                    <span><span class="legend-dot" style="background:#1d4ed8; border-radius:0;"></span>CPU</span>
+                    <span><span class="legend-dot" style="background:#7F77DD; border-radius:0;"></span>RAM</span>
+                </div>
+                <div class="chart-wrap" style="height:260px;">
+                    <canvas id="chartResources" role="img" aria-label="График изменения лимитов CPU и RAM по шагам">Данные загружаются...</canvas>
+                </div>
             </div>
 
+            <!-- 4. Распределение операций по уровню риска -->
             <div>
                 <p><strong>Распределение операций по уровню риска</strong></p>
-                <img src="{% static 'management_panel/chart_risk.png' %}?v={{ chart_version }}" alt="График рисков">
+                <div class="chart-legend">
+                    <span><span class="legend-dot" style="background:#1D9E75;"></span>Низкий</span>
+                    <span><span class="legend-dot" style="background:#EF9F27;"></span>Средний</span>
+                    <span><span class="legend-dot" style="background:#E24B4A;"></span>Высокий</span>
+                </div>
+                <div class="chart-wrap" style="height:260px;">
+                    <canvas id="chartRisk" role="img" aria-label="Кольцевая диаграмма распределения уровней риска">Данные загружаются...</canvas>
+                </div>
             </div>
+
         </div>
     </div>
 
 </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+(function () {
+    const gridColor = 'rgba(0,0,0,0.06)';
+    const textColor = '#64748b';
+
+    function parseJson(id) {
+        try { return JSON.parse(document.getElementById(id).textContent); }
+        catch (e) { return []; }
+    }
+
+    /* ── 1. Решения контейнера ── */
+    const summaryRaw = parseJson('data-summary');
+    const decisionOrder = ['allow', 'deny', 'rollback'];
+    const decisionColors = { allow: '#1D9E75', deny: '#E24B4A', rollback: '#EF9F27' };
+    const decisionLabels = decisionOrder;
+    const decisionMap = {};
+    summaryRaw.forEach(function(r) { decisionMap[r.decision] = r.count; });
+    const decisionData = decisionOrder.map(function(k) { return decisionMap[k] || 0; });
+
+    new Chart(document.getElementById('chartDecisions'), {
+        type: 'bar',
+        data: {
+            labels: decisionLabels,
+            datasets: [{
+                label: 'Решения',
+                data: decisionData,
+                backgroundColor: decisionOrder.map(function(k) { return decisionColors[k]; }),
+                borderRadius: 6,
+                borderSkipped: false,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: function(ctx) {
+                            var total = decisionData.reduce(function(a,b){return a+b;},0);
+                            var pct = total ? Math.round(ctx.parsed.y / total * 100) : 0;
+                            return ' ' + ctx.parsed.y + ' (' + pct + '%)';
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: { grid: { display: false }, ticks: { color: textColor } },
+                y: { beginAtZero: true, grid: { color: gridColor }, ticks: { color: textColor, stepSize: 1 } }
+            }
+        }
+    });
+
+    /* ── 2. Доступность по шагам ── */
+    var historyRaw = parseJson('data-history');
+    var hSteps = historyRaw.map(function(r) { return 'Шаг ' + r.step; });
+    var hAvail = historyRaw.map(function(r) { return r.available; });
+
+    new Chart(document.getElementById('chartAvailability'), {
+        type: 'line',
+        data: {
+            labels: hSteps,
+            datasets: [{
+                label: 'Доступность',
+                data: hAvail,
+                borderColor: '#1d4ed8',
+                backgroundColor: 'rgba(29,78,216,0.08)',
+                fill: true,
+                tension: 0.3,
+                pointRadius: 4,
+                pointBackgroundColor: '#1d4ed8',
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { grid: { display: false }, ticks: { color: textColor, autoSkip: false, maxRotation: 45 } },
+                y: { beginAtZero: true, max: 1.2, grid: { color: gridColor }, ticks: { color: textColor, stepSize: 1 } }
+            }
+        }
+    });
+
+    /* ── 3. Лимиты ресурсов ── */
+    var cpuData = historyRaw.map(function(r) { return r.cpu_limit; });
+    var ramData = historyRaw.map(function(r) { return r.memory_limit; });
+
+    new Chart(document.getElementById('chartResources'), {
+        type: 'line',
+        data: {
+            labels: hSteps,
+            datasets: [
+                {
+                    label: 'CPU',
+                    data: cpuData,
+                    borderColor: '#1d4ed8',
+                    backgroundColor: 'transparent',
+                    tension: 0.3,
+                    pointRadius: 4,
+                    pointBackgroundColor: '#1d4ed8',
+                    borderDash: [],
+                },
+                {
+                    label: 'RAM',
+                    data: ramData,
+                    borderColor: '#7F77DD',
+                    backgroundColor: 'transparent',
+                    tension: 0.3,
+                    pointRadius: 4,
+                    pointBackgroundColor: '#7F77DD',
+                    borderDash: [5, 4],
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { grid: { display: false }, ticks: { color: textColor, autoSkip: false, maxRotation: 45 } },
+                y: { beginAtZero: true, grid: { color: gridColor }, ticks: { color: textColor } }
+            }
+        }
+    });
+
+    /* ── 4. Риски (кольцевая) ── */
+    var riskRaw = parseJson('data-risk');
+    var riskOrder = ['Низкий', 'Средний', 'Высокий'];
+    var riskColors = { 'Низкий': '#1D9E75', 'Средний': '#EF9F27', 'Высокий': '#E24B4A' };
+    var riskMap = {};
+    riskRaw.forEach(function(r) { riskMap[r.risk_level] = r.count; });
+    var riskLabels = riskRaw.map(function(r) { return r.risk_level; });
+    var riskData = riskLabels.map(function(k) { return riskMap[k] || 0; });
+    var riskBg = riskLabels.map(function(k) { return riskColors[k] || '#888'; });
+
+    new Chart(document.getElementById('chartRisk'), {
+        type: 'doughnut',
+        data: {
+            labels: riskLabels,
+            datasets: [{
+                data: riskData,
+                backgroundColor: riskBg,
+                borderWidth: 2,
+                borderColor: '#fff',
+                hoverOffset: 6,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '62%',
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: function(ctx) {
+                            var total = riskData.reduce(function(a,b){return a+b;},0);
+                            var pct = total ? Math.round(ctx.parsed / total * 100) : 0;
+                            return ' ' + ctx.parsed + ' (' + pct + '%)';
+                        }
+                    }
+                }
+            }
+        }
+    });
+})();
+</script>
+
 </body>
 </html>
